@@ -1,6 +1,9 @@
 package main
 
-import "image"
+import (
+	"image"
+	"image/color"
+)
 
 // Create a new grayscale image from an rgba image.
 func rgbaToGray(img image.Image) *image.Gray {
@@ -18,7 +21,6 @@ func rgbaToGray(img image.Image) *image.Gray {
 }
 
 // Calculate the average intensity of a gray image.
-// TODO: make this faster
 func avgIntensity(gray *image.Gray) float64 {
 	var sum float64
 	for _, pix := range gray.Pix {
@@ -27,9 +29,23 @@ func avgIntensity(gray *image.Gray) float64 {
 	return sum / float64(len(gray.Pix)*256)
 }
 
-func colorWhite(gray *image.Gray) *image.Gray {
-	for i := range gray.Pix {
-		gray.Pix[i] = 255
+func newWhite(bounds image.Rectangle) *image.Gray {
+	var white = image.NewGray(bounds)
+	for i := range white.Pix {
+		white.Pix[i] = 255
 	}
-	return gray
+	return white
+}
+
+func blackOrWhite(g color.Gray) color.Gray {
+	if g.Y < 123 {
+		return color.Gray{0} // Black
+	}
+	return color.Gray{255} // White
+}
+
+func copyGray(gray *image.Gray) *image.Gray {
+	var clone = image.NewGray(gray.Bounds())
+	copy(clone.Pix, gray.Pix)
+	return clone
 }

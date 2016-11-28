@@ -31,3 +31,14 @@ func min(a, b int) int {
 	}
 	return a
 }
+
+// Convert a uint16 to a int8 taking into account bounds.
+func i16ToUI8(x int16) uint8 {
+	switch {
+	case x < 1:
+		return uint8(0)
+	case x > 254:
+		return uint8(255)
+	}
+	return uint8(x)
+}

@@ -28,11 +28,7 @@ func (dith ThresholdDitherer) apply(gray *image.Gray) *image.Gray {
 	)
 	for i := 0; i < width; i++ {
 		for j := 0; j < height; j++ {
-			if gray.GrayAt(i, j).Y > dith.threshold {
-				dithered.SetGray(i, j, color.Gray{255})
-			} else {
-				dithered.SetGray(i, j, color.Gray{0})
-			}
+			dithered.SetGray(i, j, blackOrWhite(gray.GrayAt(i, j)))
 		}
 	}
 	return dithered
@@ -49,7 +45,7 @@ type GridDitherer struct {
 func (dith GridDitherer) apply(gray *image.Gray) *image.Gray {
 	var (
 		bounds   = gray.Bounds()
-		dithered = colorWhite(image.NewGray(bounds))
+		dithered = newWhite(bounds)
 		width    = bounds.Dx()
 		height   = bounds.Dy()
 	)
@@ -57,17 +53,47 @@ func (dith GridDitherer) apply(gray *image.Gray) *image.Gray {
 		for j := 0; j < height; j += dith.k {
 			var (
 				cell = rgbaToGray(gray.SubImage(image.Rect(i, j, i+dith.k, j+dith.k)))
-				mu   = avgIntensity(cell)                                 // Mean grayscale value of the cell
-				n    = math.Pow(dith.beta-mu*dith.beta, 2)/3 - dith.alpha // Number of points to sample
+				mu   = avgIntensity(cell)                // Mean grayscale value of the cell
+				n    = math.Pow((1-mu)*dith.beta, 2) / 3 // Number of points to sample
 			)
+			if n < dith.alpha {
+				n = 0
+			}
 			for k := 0; k < int(n); k++ {
 				// Sample n random points in belonging to the cell
 				var (
 					x = randInt(i, min(i+dith.k, width), dith.rng)
 					y = randInt(j, min(j+dith.k, height), dith.rng)
 				)
-				dithered.Set(x, y, color.Gray{0})
+				dithered.SetGray(x, y, color.Gray{0})
 			}
+		}
+	}
+	return dithered
+}
+
+type FloydSteinbergDitherer struct{}
+
+func (dith FloydSteinbergDitherer) apply(gray *image.Gray) *image.Gray {
+	var (
+		bounds   = gray.Bounds()
+		width    = bounds.Dx()
+		height   = bounds.Dy()
+		dithered = copyGray(gray)
+	)
+	for j := 0; j < height; j++ { // Top to bottom
+		for i := 0; i < width; i++ { // Left to right
+			var oldPixel = dithered.GrayAt(i, j)
+			// Set the pixel to black or white
+			var newPixel = blackOrWhite(oldPixel)
+			dithered.SetGray(i, j, newPixel)
+			// Determine the quantization error
+			var quant = (int16(oldPixel.Y) - int16(newPixel.Y)) / 16
+			// Spread the quantization error
+			dithered.SetGray(i+1, j, color.Gray{i16ToUI8(int16(dithered.GrayAt(i+1, j).Y) + 7*quant)})
+			dithered.SetGray(i-1, j+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(i-1, j+1).Y) + 3*quant)})
+			dithered.SetGray(i, j+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(i, j+1).Y) + 5*quant)})
+			dithered.SetGray(i+1, j+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(i+1, j+1).Y) + quant)})
 		}
 	}
 	return dithered
