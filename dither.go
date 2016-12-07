@@ -72,6 +72,8 @@ func (dith GridDitherer) apply(gray *image.Gray) *image.Gray {
 	return dithered
 }
 
+// FloydSteinbergDitherer implements the Floyd-Steingberg algorithm, which is a
+// variation of the error diffusion method.
 type FloydSteinbergDitherer struct{}
 
 func (dith FloydSteinbergDitherer) apply(gray *image.Gray) *image.Gray {
