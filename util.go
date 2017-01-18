@@ -4,14 +4,16 @@ import (
 	"image"
 	"image/color"
 	_ "image/jpeg"
+	"image/png"
+	_ "image/png"
 	"math"
 	"math/rand"
 	"os"
 )
 
-// Read and load an image from a file path.
-func loadImage(filepath string) (image.Image, error) {
-	infile, err := os.Open(filepath)
+// LoadImage reads and loads an image from a file path.
+func LoadImage(path string) (image.Image, error) {
+	infile, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -21,6 +23,17 @@ func loadImage(filepath string) (image.Image, error) {
 		return nil, err
 	}
 	return img, nil
+}
+
+// SaveImagePNG save an image to a PNG file.
+func SaveImagePNG(img image.Image, path string) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	png.Encode(f, img)
+	return nil
 }
 
 // min returns the smallest of two ints.
