@@ -54,15 +54,27 @@ func CalculateCentroids(tess Tessellation, weights *image.Gray) []image.Point {
 }
 
 func calculateCentroid(points []image.Point, weights *image.Gray) (centroid image.Point) {
-	var totalWeight int
+	var totalWeight float64
+	var cx float64
+	var cy float64
 	for _, point := range points {
-		var weight = int(weights.GrayAt(point.X, point.Y).Y) + 1
-		centroid.X += point.X * weight
-		centroid.Y += point.Y * weight
+		var weight = float64(weights.GrayAt(point.X, point.Y).Y) + 1
+		cx += float64(point.X) * weight
+		cy += float64(point.Y) * weight
 		totalWeight += weight
 	}
-	centroid.X /= totalWeight
-	centroid.Y /= totalWeight
+	cx /= totalWeight
+	cy /= totalWeight
+	if cx-math.Floor(cx) < 0.5 {
+		centroid.X = int(cx)
+	} else {
+		centroid.X = int(cx) + 1
+	}
+	if cy-math.Floor(cy) < 0.5 {
+		centroid.Y = int(cy)
+	} else {
+		centroid.Y = int(cy) + 1
+	}
 	return
 }
 

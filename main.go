@@ -32,27 +32,27 @@ func main() {
 	//SaveImagePNG(gd, "screenshots/grid_dithering.png")
 
 	// Floyd-Steinberg dithering
-	var fsd = FloydSteinbergDitherer{}.apply(gray)
-	SaveImagePNG(fsd, "screenshots/floyd_steinberg_dithering.png")
+	//var fsd = FloydSteinbergDitherer{}.apply(gray)
+	//SaveImagePNG(fsd, "screenshots/floyd_steinberg_dithering.png")
 
-	// var sites = ExtractPoints(rtd, 0, 0)
-	// var voronoi = BuildVoronoi(sites, gray.Bounds())
+	var sites = ExtractPoints(rtd, 0, 0)
+	var voronoi = BuildVoronoi(sites, gray.Bounds())
 
-	// var vr = DrawTessallationRegions(voronoi, gray.Bounds())
-	// SaveImagePNG(vr, "screenshots/voronoi_regions.png")
+	var vr = DrawTessallationRegions(voronoi, gray.Bounds())
+	SaveImagePNG(vr, "screenshots/voronoi_regions.png")
 
-	// var vs = DrawTessallationSites(voronoi, gray.Bounds())
-	// SaveImagePNG(vs, "screenshots/voronoi_sites.png")
+	var vs = DrawTessallationSites(voronoi, gray.Bounds())
+	SaveImagePNG(vs, "screenshots/voronoi_sites.png")
 
-	// var weights = gray
-	// for i := 0; i < 15; i++ {
-	// 	var centroids = CalculateCentroids(voronoi, weights)
-	// 	voronoi = BuildVoronoi(centroids, gray.Bounds())
-	// }
+	var weights = gray
+	for i := 0; i < 20; i++ {
+		var centroids = CalculateCentroids(voronoi, weights)
+		voronoi = BuildVoronoi(centroids, gray.Bounds())
+	}
 
-	// var cvr = DrawTessallationRegions(voronoi, gray.Bounds())
-	// SaveImagePNG(cvr, "screenshots/centroidal_voronoi_regions.png")
+	var cvr = DrawTessallationRegions(voronoi, gray.Bounds())
+	SaveImagePNG(cvr, "screenshots/centroidal_voronoi_regions.png")
 
-	// var cvs = DrawTessallationSites(voronoi, gray.Bounds())
-	// SaveImagePNG(cvs, "screenshots/centroidal_voronoi_sites.png")
+	var cvs = DrawTessallationSites(voronoi, gray.Bounds())
+	SaveImagePNG(cvs, "screenshots/centroidal_voronoi_sites.png")
 }
