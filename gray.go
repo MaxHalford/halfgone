@@ -49,12 +49,12 @@ func copyGray(gray *image.Gray) *image.Gray {
 // intensity to 255. Thus 0 (black) becomes 255 (white) and vice versa.
 func InvertGray(gray *image.Gray) *image.Gray {
 	var (
-		reverse = copyGray(gray)
-		bounds  = reverse.Bounds()
+		bounds  = gray.Bounds()
+		reverse = MakeGray(bounds, 0)
 	)
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			reverse.SetGray(x, y, color.Gray{255 - reverse.GrayAt(x, y).Y})
+			reverse.SetGray(x, y, color.Gray{255 - gray.GrayAt(x, y).Y})
 		}
 	}
 	return reverse
@@ -88,10 +88,10 @@ func makeGrayHistogram(gray *image.Gray) GrayHistogram {
 	for i := 0; i <= 255; i++ {
 		hist[uint8(i)] = []image.Point{}
 	}
-	for i := bounds.Min.X; i < bounds.Max.X; i++ {
-		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
-			var intensity = gray.GrayAt(i, j).Y
-			hist[intensity] = append(hist[intensity], image.Point{i, j})
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			var intensity = gray.GrayAt(x, y).Y
+			hist[intensity] = append(hist[intensity], image.Point{x, y})
 		}
 	}
 	return hist

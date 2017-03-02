@@ -83,7 +83,33 @@ func square(x int) int {
 	return x * x
 }
 
-// pointDistance calculates the L2 distance between two points.
-func pointDistance(a, b image.Point) float64 {
+// euclideanDistance calculates the L2 distance between two points.
+func euclideanDistance(a, b image.Point) float64 {
 	return math.Pow(float64(square(b.X-a.X)+square(b.Y-a.Y)), 0.5)
+}
+
+// binarySearchInt searches for the index of the first value in a sorted slice which is above a
+// given value.
+func binarySearchInt(value int, ints []int) int {
+	var (
+		index = -1
+		a     = 0
+		b     = len(ints) / 2
+		c     = len(ints) - 1
+	)
+
+	for a != b && b != c {
+		if value <= ints[b] {
+			c = b
+			b = (a + c) / 2
+		} else {
+			a = b
+			b = (a + c + 1) / 2
+		}
+		if value <= ints[b] {
+			index = b
+		}
+	}
+
+	return index
 }
