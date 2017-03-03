@@ -1,11 +1,9 @@
-package main
+package halfgone
 
 import (
 	"image"
 	"image/color"
-	_ "image/jpeg"
 	"image/png"
-	_ "image/png"
 	"math/rand"
 	"os"
 )

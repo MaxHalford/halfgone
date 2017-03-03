@@ -1,11 +1,11 @@
-package main
+package halfgone
 
 import (
 	"image"
 	"image/color"
 )
 
-// RGBAToGray create a new grayscale image from an rgba image.
+// RGBAToGray creates an image.Gray from an RGBA image.Image.
 func RGBAToGray(img image.Image) *image.Gray {
 	var (
 		bounds = img.Bounds()
@@ -13,8 +13,7 @@ func RGBAToGray(img image.Image) *image.Gray {
 	)
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			var rgba = img.At(x, y)
-			gray.Set(x, y, rgba)
+			gray.Set(x, y, img.At(x, y))
 		}
 	}
 	return gray
