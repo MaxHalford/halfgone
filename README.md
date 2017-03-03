@@ -69,7 +69,7 @@ var gd = halfgone.GridDitherer{K: 5, Alpha: 3, Beta: 8, RNG: rng}.Apply(gray)
 ## Floyd-Steinberg dithering
 
 ```go
-var fsd = FloydSteinbergDitherer{}.apply(gray)
+var fsd = halfgone.FloydSteinbergDitherer{}.apply(gray)
 ```
 
 ![floyd_steinberg_dithering](examples/images/floyd_steinberg_dithering.png)
