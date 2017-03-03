@@ -15,7 +15,7 @@ func main() {
 	)
 
 	// Grayscale conversion
-	var gray = halfgone.RGBAToGray(img)
+	var gray = halfgone.ImageToGray(img)
 	halfgone.SaveImagePNG(gray, "images/grayscale.png")
 
 	// Intensity inversion

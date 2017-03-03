@@ -5,14 +5,14 @@ import (
 	"image/color"
 )
 
-// RGBAToGray creates an image.Gray from an RGBA image.Image.
-func RGBAToGray(img image.Image) *image.Gray {
+// ImageToGray converts an image.Image into an image.Gray.
+func ImageToGray(img image.Image) *image.Gray {
 	var (
 		bounds = img.Bounds()
 		gray   = image.NewGray(bounds)
 	)
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+	for x := 0; x < bounds.Dx(); x++ {
+		for y := 0; y < bounds.Dy(); y++ {
 			gray.Set(x, y, img.At(x, y))
 		}
 	}

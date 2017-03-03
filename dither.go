@@ -122,7 +122,7 @@ func (gd GridDitherer) Apply(gray *image.Gray) *image.Gray {
 	for x := 0; x < width; x += gd.K {
 		for y := 0; y < height; y += gd.K {
 			var (
-				cell = RGBAToGray(gray.SubImage(image.Rect(x, y, x+gd.K, y+gd.K)))
+				cell = ImageToGray(gray.SubImage(image.Rect(x, y, x+gd.K, y+gd.K)))
 				mu   = avgIntensity(cell)              // Mean grayscale value of the cell
 				n    = math.Pow((1-mu)*gd.Beta, 2) / 3 // Number of points to sample
 			)

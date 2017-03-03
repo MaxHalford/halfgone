@@ -15,7 +15,7 @@ var img, err = LoadImage("images/penguin.jpg")
 ## Grayscale
 
 ```go
-var gray = rgbaToGray(img)
+var gray = ImageToGray(img)
 ```
 
 ![grayscale](examples/images/grayscale.png)
