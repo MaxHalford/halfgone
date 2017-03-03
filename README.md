@@ -6,7 +6,7 @@ A collection of halftoning algorithms written in Go. For the while this is not a
 ## Original image
 
 ```go
-var img, err = LoadImage("examples/images/penguin.jpg")
+var img, err = LoadImage("images/penguin.jpg")
 ```
 
 ![original](examples/images/penguin.jpg)
@@ -27,7 +27,7 @@ var gray = rgbaToGray(img)
 var inverted = InvertGray(gray)
 ```
 
-![reversed_grayscale](examples/images/reversed_grayscale.png)
+![reversed_grayscale](examples/images/inverted_grayscale.png)
 
 
 ## Threshold dithering
