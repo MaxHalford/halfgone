@@ -74,14 +74,14 @@ type GridDitherer struct {
 func (gd GridDitherer) apply(gray *image.Gray) *image.Gray {
 	var (
 		bounds   = gray.Bounds()
-		dithered = MakeGray(bounds, 255)
+		dithered = makeGray(bounds, 255)
 		width    = bounds.Dx()
 		height   = bounds.Dy()
 	)
 	for x := 0; x < width; x += gd.k {
 		for y := 0; y < height; y += gd.k {
 			var (
-				cell = RgbaToGray(gray.SubImage(image.Rect(x, y, x+gd.k, y+gd.k)))
+				cell = RGBAToGray(gray.SubImage(image.Rect(x, y, x+gd.k, y+gd.k)))
 				mu   = avgIntensity(cell)              // Mean grayscale value of the cell
 				n    = math.Pow((1-mu)*gd.beta, 2) / 3 // Number of points to sample
 			)
@@ -141,7 +141,7 @@ type ImportanceSampling struct {
 func (is ImportanceSampling) apply(gray *image.Gray) *image.Gray {
 	var (
 		bounds    = gray.Bounds()
-		dithered  = MakeGray(bounds, 255)
+		dithered  = makeGray(bounds, 255)
 		histogram = make(map[uint8][]image.Point)
 	)
 	// Build histogram

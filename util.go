@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
-	"math"
 	"math/rand"
 	"os"
 )
@@ -68,6 +67,15 @@ func randPoint(bounds image.Rectangle, rng *rand.Rand) image.Point {
 	}
 }
 
+// randPoints generates n points with random coordinates from some given bounds.
+func randPoints(n int, bounds image.Rectangle, rng *rand.Rand) []image.Point {
+	var points = make([]image.Point, n)
+	for i := range points {
+		points[i] = randPoint(bounds, rng)
+	}
+	return points
+}
+
 // randColor generates a random non-transparent color.
 func randColor() color.Color {
 	return color.NRGBA{
@@ -76,16 +84,6 @@ func randColor() color.Color {
 		uint8(rand.Intn(256)),
 		255,
 	}
-}
-
-// square returns the square of an integer.
-func square(x int) int {
-	return x * x
-}
-
-// euclideanDistance calculates the L2 distance between two points.
-func euclideanDistance(a, b image.Point) float64 {
-	return math.Pow(float64(square(b.X-a.X)+square(b.Y-a.Y)), 0.5)
 }
 
 // binarySearchInt searches for the index of the first value in a sorted slice which is above a

@@ -1,6 +1,6 @@
 # halfgone
 
-A collection of halftoning algorithms written in Go.
+A collection of halftoning algorithms written in Go. For the while this is not aimed at being reused!
 
 ## Original image
 

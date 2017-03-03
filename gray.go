@@ -5,8 +5,8 @@ import (
 	"image/color"
 )
 
-// RgbaToGray create a new grayscale image from an rgba image.
-func RgbaToGray(img image.Image) *image.Gray {
+// RGBAToGray create a new grayscale image from an rgba image.
+func RGBAToGray(img image.Image) *image.Gray {
 	var (
 		bounds = img.Bounds()
 		gray   = image.NewGray(bounds)
@@ -29,9 +29,9 @@ func avgIntensity(gray *image.Gray) float64 {
 	return sum / float64(len(gray.Pix)*256)
 }
 
-// MakeGray generates a new image.Gray with each pixel being of a given
+// makeGray generates a new image.Gray with each pixel being of a given
 // intensity.
-func MakeGray(bounds image.Rectangle, intensity uint8) *image.Gray {
+func makeGray(bounds image.Rectangle, intensity uint8) *image.Gray {
 	var gray = image.NewGray(bounds)
 	for i := range gray.Pix {
 		gray.Pix[i] = intensity
@@ -50,7 +50,7 @@ func copyGray(gray *image.Gray) *image.Gray {
 func InvertGray(gray *image.Gray) *image.Gray {
 	var (
 		bounds  = gray.Bounds()
-		reverse = MakeGray(bounds, 0)
+		reverse = makeGray(bounds, 0)
 	)
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
@@ -58,41 +58,4 @@ func InvertGray(gray *image.Gray) *image.Gray {
 		}
 	}
 	return reverse
-}
-
-// ExtractPoints extracts a list of points for which the intensity lies in a
-// given intensity range.
-func ExtractPoints(gray *image.Gray, min, max uint8) (points []image.Point) {
-	var bounds = gray.Bounds()
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			var intensity = gray.GrayAt(x, y).Y
-			if intensity >= min && intensity <= max {
-				points = append(points, image.Point{x, y})
-			}
-		}
-	}
-	return
-}
-
-// A GrayHistogram is a map which maps uint8s to image.Points.
-type GrayHistogram map[uint8][]image.Point
-
-// Create a GrayHistogram from a grayscale image.
-func makeGrayHistogram(gray *image.Gray) GrayHistogram {
-	var (
-		bounds = gray.Bounds()
-		hist   = make(GrayHistogram)
-	)
-	// Fill the histogram with empty slices
-	for i := 0; i <= 255; i++ {
-		hist[uint8(i)] = []image.Point{}
-	}
-	for x := bounds.Min.X; x < bounds.Max.X; x++ {
-		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			var intensity = gray.GrayAt(x, y).Y
-			hist[intensity] = append(hist[intensity], image.Point{x, y})
-		}
-	}
-	return hist
 }
