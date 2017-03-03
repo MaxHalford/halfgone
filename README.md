@@ -2,13 +2,15 @@
 
 A collection of halftoning algorithms written in Go. For the while this is not aimed at being reused!
 
+
 ## Original image
 
 ```go
-var img, err = LoadImage("screenshots/penguin.jpg")
+var img, err = LoadImage("images/penguin.jpg")
 ```
 
-![original](screenshots/penguin.jpg)
+![original](images/penguin.jpg)
+
 
 ## Grayscale
 
@@ -16,7 +18,8 @@ var img, err = LoadImage("screenshots/penguin.jpg")
 var gray = rgbaToGray(img)
 ```
 
-![grayscale](screenshots/grayscale.png)
+![grayscale](images/grayscale.png)
+
 
 ## Inverted grayscale
 
@@ -24,7 +27,8 @@ var gray = rgbaToGray(img)
 var inverted = InvertGray(gray)
 ```
 
-![reversed_grayscale](screenshots/reversed_grayscale.png)
+![reversed_grayscale](images/reversed_grayscale.png)
+
 
 ## Threshold dithering
 
@@ -34,7 +38,8 @@ var td = ThresholdDitherer{
 }.apply(gray)
 ```
 
-![threshold_dithering](screenshots/threshold_dithering.png)
+![threshold_dithering](images/threshold_dithering.png)
+
 
 ## Random threshold dithering
 
@@ -45,7 +50,8 @@ var rtd = RandomThresholdDitherer{
 }.apply(gray)
 ```
 
-![random_threshold_dithering](screenshots/random_threshold_dithering.png)
+![random_threshold_dithering](images/random_threshold_dithering.png)
+
 
 ## Bosch and Herman’s grid-based dithering
 
@@ -58,7 +64,21 @@ var gd = GridDitherer{
 }.apply(gray)
 ```
 
-![grid_dithering](screenshots/grid_dithering.png)
+![grid_dithering](images/grid_dithering.png)
+
+
+## Importance sampling
+
+```go
+var is = ImportanceSampling{
+    n: 2000,
+    threshold: 100,
+    rng:   rand.New(rand.NewSource(time.Now().UnixNano())),
+}.apply(gray)
+```
+
+![importance_sampling](images/importance_sampling.png)
+
 
 ## Floyd-Steinberg dithering
 
@@ -66,4 +86,4 @@ var gd = GridDitherer{
 var fsd = FloydSteinbergDitherer{}.apply(gray)
 ```
 
-![floyd_steinberg_dithering](screenshots/floyd_steinberg_dithering.png)
+![floyd_steinberg_dithering](images/floyd_steinberg_dithering.png)
