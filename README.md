@@ -2,7 +2,7 @@
 
 This repository contains implementations of *digital halftoning* - also called *dithering* -  algorithms written in Go. The implementations are restricted to black and white rendering and are based on the `image` library from Go's standard library.
 
-The implementations are quite fast but are not optimized for production where one would typically want to use bit shifting when possible. I moved the common code for error-diffusion dithering into a separate functions because it's always the same underlying algorithm, whether it be Floyd-Steinberg dithering or Stucki dithering. I did the same for ordered dithering. In production you would probably want to choose a particular dithering algorithm and avoid using generic code which filters specific optimizations.
+The implementations are quite fast but are not optimized for production where you would typically want to use bit shifting when possible. I moved the common code for error-diffusion dithering into a separate functions because it's always the same underlying algorithm, whether it be Floyd-Steinberg dithering or Stucki dithering. I did the same for ordered dithering. In production you would probably want to choose a particular dithering algorithm and avoid using generic code which makes it harder to write optimized code.
 
 If you are interested in digital halftoning, [this web page](http://www.efg2.com/Lab/Library/ImageProcessing/DHALF.TXT) is, in my opinion, a fantastic introduction. I've also written a [blog post](https://maxhalford.github.io/blog/halftoning-1/) which goes through some of the implementations.
 
