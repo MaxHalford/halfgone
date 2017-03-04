@@ -54,7 +54,7 @@ func (rtd RandomThresholdDitherer) Apply(gray *image.Gray) *image.Gray {
 	)
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			var threshold = uint8(rtd.RNG.Intn(rtd.MaxThreshold))
+			var threshold = uint8(rtd.RNG.Intn(rtd.MaxThreshold + 1))
 			if gray.GrayAt(x, y).Y > threshold {
 				dithered.SetGray(x, y, color.Gray{255}) // White
 			} else {

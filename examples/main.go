@@ -23,11 +23,11 @@ func main() {
 	halfgone.SaveImagePNG(inverted, "images/inverted_grayscale.png")
 
 	// Threshold dithering
-	var td = halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
+	var td = halfgone.ThresholdDitherer{Threshold: 127}.Apply(gray)
 	halfgone.SaveImagePNG(td, "images/threshold_dithering.png")
 
 	// Random threshold dithering
-	var rtd = halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gray)
+	var rtd = halfgone.RandomThresholdDitherer{MaxThreshold: 200, RNG: rng}.Apply(gray)
 	halfgone.SaveImagePNG(rtd, "images/random_threshold_dithering.png")
 
 	// Importance sampling

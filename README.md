@@ -37,7 +37,7 @@ InvertGray(gray)
 ## Threshold dithering
 
 ```go
-halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
+halfgone.ThresholdDitherer{Threshold: 127}.Apply(gray)
 ```
 
 ![threshold_dithering](examples/images/threshold_dithering.png)
@@ -46,7 +46,7 @@ halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
 ## Random threshold dithering
 
 ```go
-halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gray)
+halfgone.RandomThresholdDitherer{MaxThreshold: 255, RNG: rng}.Apply(gray)
 ```
 
 ![random_threshold_dithering](examples/images/random_threshold_dithering.png)
