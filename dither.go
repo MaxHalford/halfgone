@@ -78,6 +78,7 @@ func (is ImportanceSampling) Apply(gray *image.Gray) *image.Gray {
 		bounds    = gray.Bounds()
 		dithered  = makeGray(bounds, 255)
 		histogram = make(map[uint8][]image.Point)
+		sampled   = make(map[image.Point]bool)
 	)
 	// Build histogram
 	for x := bounds.Min.X; x < bounds.Max.X; x++ {
@@ -95,10 +96,16 @@ func (is ImportanceSampling) Apply(gray *image.Gray) *image.Gray {
 		roulette[i] = roulette[i-1] + (255-i)*len(histogram[uint8(i)])
 	}
 	// Run the wheel
-	for i := 0; i < is.N; i++ {
+	var i int
+	for i < is.N {
 		var bin = uint8(binarySearchInt(is.RNG.Intn(roulette[is.Threshold]), roulette))
 		var point = histogram[bin][is.RNG.Intn(len(histogram[bin]))]
-		dithered.SetGray(point.X, point.Y, color.Gray{0})
+		// Add the point if it hasn't been already sampled
+		if !sampled[point] {
+			dithered.SetGray(point.X, point.Y, color.Gray{0})
+			sampled[point] = true
+			i++
+		}
 	}
 	return dithered
 }

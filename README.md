@@ -1,6 +1,10 @@
 # halfgone
 
-A collection of halftoning algorithms written in Go. These are not optimized for production where you would typically want to use bit shifting.
+This repository contains implementations of *digital halftoning* - also called *dithering* -  algorithms written in Go. The implementations are restricted to black and white rendering and are based on the `image` library from Go's standard library.
+
+The implementations are quite fast but are not optimized for production where one would typically want to use bit shifting when possible.
+
+If you are interested in digital halftoning, [this web page](http://www.efg2.com/Lab/Library/ImageProcessing/DHALF.TXT) is, in my opinion, a fantastic introduction.
 
 
 ## Original image
