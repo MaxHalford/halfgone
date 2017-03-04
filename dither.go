@@ -116,24 +116,21 @@ func (gd GridDitherer) Apply(gray *image.Gray) *image.Gray {
 	var (
 		bounds   = gray.Bounds()
 		dithered = makeGray(bounds, 255)
-		width    = bounds.Dx()
-		height   = bounds.Dy()
 	)
-	for x := 0; x < width; x += gd.K {
-		for y := 0; y < height; y += gd.K {
+	for x := bounds.Min.X; x < bounds.Max.X; x += gd.K {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y += gd.K {
 			var (
 				cell = ImageToGray(gray.SubImage(image.Rect(x, y, x+gd.K, y+gd.K)))
-				mu   = avgIntensity(cell)              // Mean grayscale value of the cell
-				n    = math.Pow((1-mu)*gd.Beta, 2) / 3 // Number of points to sample
+				mu   = avgIntensity(cell)
+				n    = math.Pow((1-mu)*gd.Beta, 2) / 3
 			)
 			if n < gd.Alpha {
 				n = 0
 			}
-			// Sample n random points in belonging to the cell
-			for i := 0; i < int(n); i++ {
+			for k := 0; k < int(n); k++ {
 				var (
-					xx = randInt(x, min(x+gd.K, width), gd.RNG)
-					yy = randInt(y, min(y+gd.K, height), gd.RNG)
+					xx = randInt(x, min(x+gd.K, bounds.Max.X), gd.RNG)
+					yy = randInt(y, min(y+gd.K, bounds.Max.Y), gd.RNG)
 				)
 				dithered.SetGray(xx, yy, color.Gray{0})
 			}
@@ -142,16 +139,23 @@ func (gd GridDitherer) Apply(gray *image.Gray) *image.Gray {
 	return dithered
 }
 
-// FloydSteinbergDitherer implements the Floyd-Steingberg algorithm, which is a
-// variation of the error diffusion method.
-type FloydSteinbergDitherer struct{}
+type DiffusionCell struct {
+	x int
+	y int
+	m int16
+}
 
-// Apply Floyd-Steinberg dithering.
-func (fsd FloydSteinbergDitherer) Apply(gray *image.Gray) *image.Gray {
+type DiffusionMask struct {
+	divisor int16
+	cells   []DiffusionCell
+}
+
+func applyErrorDiffusion(gray *image.Gray, mask DiffusionMask) *image.Gray {
 	var (
 		bounds   = gray.Bounds()
 		dithered = copyGray(gray)
 	)
+
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ { // Top to bottom
 		for x := bounds.Min.X; x < bounds.Max.X; x++ { // Left to right
 			var oldPixel = dithered.GrayAt(x, y)
@@ -162,13 +166,173 @@ func (fsd FloydSteinbergDitherer) Apply(gray *image.Gray) *image.Gray {
 			}
 			dithered.SetGray(x, y, newPixel)
 			// Determine the quantization error
-			var quant = (int16(oldPixel.Y) - int16(newPixel.Y)) / 16
+			var quant = (int16(oldPixel.Y) - int16(newPixel.Y)) / mask.divisor
 			// Spread the quantization error
-			dithered.SetGray(x+1, y, color.Gray{i16ToUI8(int16(dithered.GrayAt(x+1, y).Y) + 7*quant)})
-			dithered.SetGray(x-1, y+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(x-1, y+1).Y) + 3*quant)})
-			dithered.SetGray(x, y+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(x, y+1).Y) + 5*quant)})
-			dithered.SetGray(x+1, y+1, color.Gray{i16ToUI8(int16(dithered.GrayAt(x+1, y+1).Y) + quant)})
+			for _, c := range mask.cells {
+				var newIntensity = int16(dithered.GrayAt(x+c.x, y+c.y).Y) + int16(c.m*quant)
+				dithered.SetGray(x+c.x, y+c.y, color.Gray{i16ToUI8(newIntensity)})
+			}
 		}
 	}
 	return dithered
+}
+
+// FloydSteinbergDitherer implements Floyd-Steingberg dithering.
+type FloydSteinbergDitherer struct{}
+
+// Apply Floyd-Steinberg dithering.
+func (fsd FloydSteinbergDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 16,
+		cells: []DiffusionCell{
+			{1, 0, 7},
+			{-1, 1, 3},
+			{0, 1, 5},
+			{1, 1, 1},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// JarvisJudiceNinkeDitherer implements Jarvis-Judice-Ninke dithering.
+type JarvisJudiceNinkeDitherer struct{}
+
+// Apply Jarvis-Judice-Ninke dithering.
+func (jjnd JarvisJudiceNinkeDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 48,
+		cells: []DiffusionCell{
+			{1, 0, 7},
+			{2, 0, 5},
+			{-2, 1, 3},
+			{-1, 1, 5},
+			{0, 1, 7},
+			{1, 1, 5},
+			{2, 1, 3},
+			{-2, 2, 1},
+			{-1, 2, 3},
+			{0, 2, 5},
+			{1, 2, 3},
+			{2, 2, 1},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// StuckiDitherer implements Stucki dithering.
+type StuckiDitherer struct{}
+
+// Apply Stucki dithering.
+func (sd StuckiDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 42,
+		cells: []DiffusionCell{
+			{1, 0, 8},
+			{2, 0, 4},
+			{-2, 1, 2},
+			{-1, 1, 4},
+			{0, 1, 8},
+			{1, 1, 4},
+			{2, 1, 2},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// AtkinsonDitherer implements Atkinson dithering.
+type AtkinsonDitherer struct{}
+
+// Apply Atkinson dithering.
+func (ad AtkinsonDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 8,
+		cells: []DiffusionCell{
+			{1, 0, 1},
+			{2, 0, 1},
+			{-1, 1, 1},
+			{0, 1, 1},
+			{1, 1, 1},
+			{0, 2, 1},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// BurkesDitherer implements Burkes dithering.
+type BurkesDitherer struct{}
+
+// Apply Burkes dithering.
+func (ad BurkesDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 32,
+		cells: []DiffusionCell{
+			{1, 0, 8},
+			{2, 0, 4},
+			{-2, 1, 2},
+			{-1, 1, 4},
+			{0, 1, 8},
+			{1, 1, 4},
+			{2, 1, 2},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// SierraDitherer implements Sierra dithering.
+type SierraDitherer struct{}
+
+// Apply Sierra dithering.
+func (sd SierraDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 32,
+		cells: []DiffusionCell{
+			{1, 0, 5},
+			{2, 0, 3},
+			{-2, 1, 2},
+			{-1, 1, 4},
+			{0, 1, 5},
+			{1, 1, 4},
+			{2, 1, 2},
+			{-1, 2, 2},
+			{0, 2, 3},
+			{1, 2, 2},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// TwoRowSierraDitherer implements Two-row Sierra dithering.
+type TwoRowSierraDitherer struct{}
+
+// Apply Two-row Sierra dithering.
+func (sd TwoRowSierraDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 16,
+		cells: []DiffusionCell{
+			{1, 0, 4},
+			{2, 0, 3},
+			{-2, 1, 2},
+			{-1, 1, 2},
+			{0, 1, 3},
+			{1, 1, 2},
+			{2, 1, 1},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
+}
+
+// SierraLiteDitherer implements Sierra Lite dithering.
+type SierraLiteDitherer struct{}
+
+// Apply Sierra Lite dithering.
+func (sd SierraLiteDitherer) Apply(gray *image.Gray) *image.Gray {
+	var mask = DiffusionMask{
+		divisor: 4,
+		cells: []DiffusionCell{
+			{1, 0, 1},
+			{-1, 1, 1},
+			{0, 1, 1},
+		},
+	}
+	return applyErrorDiffusion(gray, mask)
 }

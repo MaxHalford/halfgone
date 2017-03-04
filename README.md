@@ -1,12 +1,12 @@
 # halfgone
 
-A collection of halftoning algorithms written in Go. For the while this is not aimed at being reused!
+A collection of halftoning algorithms written in Go. These are not optimized for production where you would typically want to use bit shifting.
 
 
 ## Original image
 
 ```go
-var img, err = LoadImage("images/penguin.jpg")
+LoadImage("images/penguin.jpg")
 ```
 
 ![original](examples/images/penguin.jpg)
@@ -15,7 +15,7 @@ var img, err = LoadImage("images/penguin.jpg")
 ## Grayscale
 
 ```go
-var gray = ImageToGray(img)
+ImageToGray(img)
 ```
 
 ![grayscale](examples/images/grayscale.png)
@@ -24,7 +24,7 @@ var gray = ImageToGray(img)
 ## Inverted grayscale
 
 ```go
-var inverted = InvertGray(gray)
+InvertGray(gray)
 ```
 
 ![reversed_grayscale](examples/images/inverted_grayscale.png)
@@ -33,7 +33,7 @@ var inverted = InvertGray(gray)
 ## Threshold dithering
 
 ```go
-var td = halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
+halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
 ```
 
 ![threshold_dithering](examples/images/threshold_dithering.png)
@@ -42,7 +42,7 @@ var td = halfgone.ThresholdDitherer{Threshold: 122}.Apply(gray)
 ## Random threshold dithering
 
 ```go
-var rtd = halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gray)
+halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gray)
 ```
 
 ![random_threshold_dithering](examples/images/random_threshold_dithering.png)
@@ -51,7 +51,7 @@ var rtd = halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gr
 ## Importance sampling
 
 ```go
-var is = halfgone.ImportanceSampling{N: 2000, Threshold: 100, RNG: rng}.Apply(gray)
+halfgone.ImportanceSampling{N: 2000, Threshold: 100, RNG: rng}.Apply(gray)
 ```
 
 ![importance_sampling](examples/images/importance_sampling.png)
@@ -60,7 +60,7 @@ var is = halfgone.ImportanceSampling{N: 2000, Threshold: 100, RNG: rng}.Apply(gr
 ## Bosch and Herman’s grid-based dithering
 
 ```go
-var gd = halfgone.GridDitherer{K: 5, Alpha: 3, Beta: 8, RNG: rng}.Apply(gray)
+halfgone.GridDitherer{K: 5, Alpha: 3, Beta: 8, RNG: rng}.Apply(gray)
 ```
 
 ![grid_dithering](examples/images/grid_dithering.png)
@@ -69,7 +69,68 @@ var gd = halfgone.GridDitherer{K: 5, Alpha: 3, Beta: 8, RNG: rng}.Apply(gray)
 ## Floyd-Steinberg dithering
 
 ```go
-var fsd = halfgone.FloydSteinbergDitherer{}.apply(gray)
+halfgone.FloydSteinbergDitherer{}.apply(gray)
 ```
 
 ![floyd_steinberg_dithering](examples/images/floyd_steinberg_dithering.png)
+
+
+## Jarvis-Judice-Ninke dithering
+
+```go
+halfgone.JarvisJudiceNinkeDitherer{}.Apply(gray)
+```
+
+![jarvis_judice_ninke_dithering](examples/images/jarvis_judice_ninke_dithering.png)
+
+
+## Stucki dithering
+
+```go
+halfgone.StuckiDitherer{}.Apply(gray)
+```
+
+![stucki_dithering](examples/images/stucki_dithering.png)
+
+
+## Atkinson dithering
+
+```go
+halfgone.AtkinsonDitherer{}.Apply(gray)
+```
+
+![atkinson_dithering](examples/images/atkinson_dithering.png)
+
+
+## Burkes dithering
+
+```go
+halfgone.BurkesDitherer{}.Apply(gray)
+```
+
+![burkes_dithering](examples/images/burkes_dithering.png)
+
+
+## Sierra dithering
+
+```go
+halfgone.SierraDitherer{}.Apply(gray)
+```
+
+![seria_dithering](examples/images/seria_dithering.png)
+
+
+## Two-row Sierra dithering
+
+```go
+halfgone.TwoRowSierraDitherer{}.Apply(gray)
+```
+
+![two_row_seria_dithering](examples/images/two_row_seria_dithering.png)
+
+
+## Sierra Lite dithering
+
+```go
+halfgone.SierraLiteDitherer{}.Apply(gray)
+```
