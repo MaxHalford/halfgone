@@ -134,3 +134,6 @@ halfgone.TwoRowSierraDitherer{}.Apply(gray)
 ```go
 halfgone.SierraLiteDitherer{}.Apply(gray)
 ```
+
+![seria_lite_dithering](examples/images/seria_lite_dithering.png)
+
