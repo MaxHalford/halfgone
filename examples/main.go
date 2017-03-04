@@ -38,6 +38,22 @@ func main() {
 	var gd = halfgone.GridDitherer{K: 5, Alpha: 3, Beta: 8, RNG: rng}.Apply(gray)
 	halfgone.SaveImagePNG(gd, "images/grid_dithering.png")
 
+	// Order-2 ordered dithering
+	var o2od = halfgone.Order2OrderedDitherer{}.Apply(gray)
+	halfgone.SaveImagePNG(o2od, "images/order_2_ordered_dithering.png")
+
+	// Order-3 ordered dithering
+	var o3od = halfgone.Order3OrderedDitherer{}.Apply(gray)
+	halfgone.SaveImagePNG(o3od, "images/order_3_ordered_dithering.png")
+
+	// Order-4 ordered dithering
+	var o4od = halfgone.Order4OrderedDitherer{}.Apply(gray)
+	halfgone.SaveImagePNG(o4od, "images/order_4_ordered_dithering.png")
+
+	// Order-8 ordered dithering
+	var o8od = halfgone.Order8OrderedDitherer{}.Apply(gray)
+	halfgone.SaveImagePNG(o8od, "images/order_8_ordered_dithering.png")
+
 	// Floyd-Steinberg dithering
 	var fsd = halfgone.FloydSteinbergDitherer{}.Apply(gray)
 	halfgone.SaveImagePNG(fsd, "images/floyd_steinberg_dithering.png")

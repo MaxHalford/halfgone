@@ -146,12 +146,93 @@ func (gd GridDitherer) Apply(gray *image.Gray) *image.Gray {
 	return dithered
 }
 
+// A Pattern is a matrix of threshold values used for ordered dithering.
+type Pattern [][]uint8
+
+func applyOrderedDithering(gray *image.Gray, pattern Pattern) *image.Gray {
+	var (
+		order    = len(pattern)
+		bounds   = gray.Bounds()
+		dithered = makeGray(bounds, 255)
+	)
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			var threshold = pattern[x%order][y%order]
+			if gray.GrayAt(x, y).Y > threshold {
+				dithered.SetGray(x, y, color.Gray{255}) // White
+			} else {
+				dithered.SetGray(x, y, color.Gray{0}) // Black
+			}
+		}
+	}
+	return dithered
+}
+
+// Order2OrderedDitherer implements order-2 ordered dithering.
+type Order2OrderedDitherer struct{}
+
+// Apply order-2 ordered dithering dithering.
+func (o2od Order2OrderedDitherer) Apply(gray *image.Gray) *image.Gray {
+	var pattern = Pattern{
+		{0, 170},
+		{255, 85},
+	}
+	return applyOrderedDithering(gray, pattern)
+}
+
+// Order3OrderedDitherer implements order-3 ordered dithering.
+type Order3OrderedDitherer struct{}
+
+// Apply order-3 ordered dithering dithering.
+func (o3od Order3OrderedDitherer) Apply(gray *image.Gray) *image.Gray {
+	var pattern = Pattern{
+		{0, 223, 95},
+		{191, 159, 63},
+		{127, 31, 255},
+	}
+	return applyOrderedDithering(gray, pattern)
+}
+
+// Order4OrderedDitherer implements order-4 ordered dithering.
+type Order4OrderedDitherer struct{}
+
+// Apply order-4 ordered dithering dithering.
+func (o4od Order4OrderedDitherer) Apply(gray *image.Gray) *image.Gray {
+	var pattern = Pattern{
+		{0, 136, 34, 170},
+		{204, 68, 238, 102},
+		{51, 187, 17, 153},
+		{255, 119, 221, 85},
+	}
+	return applyOrderedDithering(gray, pattern)
+}
+
+// Order8OrderedDitherer implements order-8 ordered dithering.
+type Order8OrderedDitherer struct{}
+
+// Apply order-8 ordered dithering dithering.
+func (o8od Order8OrderedDitherer) Apply(gray *image.Gray) *image.Gray {
+	var pattern = Pattern{
+		{0, 194, 48, 242, 12, 206, 60, 255},
+		{129, 64, 178, 113, 141, 76, 190, 125},
+		{32, 226, 16, 210, 44, 238, 28, 222},
+		{161, 97, 145, 80, 174, 109, 157, 93},
+		{8, 202, 56, 250, 4, 198, 52, 246},
+		{137, 72, 186, 121, 133, 68, 182, 117},
+		{40, 234, 24, 218, 36, 230, 20, 214},
+		{170, 105, 153, 89, 165, 101, 149, 85},
+	}
+	return applyOrderedDithering(gray, pattern)
+}
+
+// A DiffusionCell indicates a relative position and a diffusion intensity used for error diffusion.
 type DiffusionCell struct {
 	x int
 	y int
 	m int16
 }
 
+// A DiffusionMask contains a slice of DiffusionCells and a normalization divisor.
 type DiffusionMask struct {
 	divisor int16
 	cells   []DiffusionCell
