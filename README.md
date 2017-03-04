@@ -55,7 +55,7 @@ halfgone.RandomThresholdDitherer{MaxThreshold: 100, RNG: rng}.Apply(gray)
 ## Importance sampling
 
 ```go
-halfgone.ImportanceSampling{N: 2000, Threshold: 100, RNG: rng}.Apply(gray)
+halfgone.ImportanceSampling{N: 4000, Threshold: 100, RNG: rng}.Apply(gray)
 ```
 
 ![importance_sampling](examples/images/importance_sampling.png)

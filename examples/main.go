@@ -31,7 +31,7 @@ func main() {
 	halfgone.SaveImagePNG(rtd, "images/random_threshold_dithering.png")
 
 	// Importance sampling
-	var is = halfgone.ImportanceSampling{N: 2000, Threshold: 100, RNG: rng}.Apply(gray)
+	var is = halfgone.ImportanceSampling{N: 4000, Threshold: 100, RNG: rng}.Apply(gray)
 	halfgone.SaveImagePNG(is, "images/importance_sampling.png")
 
 	// Bosch and Herman’s grid-based dithering
