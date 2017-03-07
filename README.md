@@ -180,3 +180,7 @@ halfgone.SierraLiteDitherer{}.Apply(gray)
 ```
 
 ![seria_lite_dithering](examples/images/seria_lite_dithering.png)
+
+## License
+
+The MIT License (MIT). Please see the [license file](LICENSE) for more information.
