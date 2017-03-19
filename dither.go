@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"math"
 	"math/rand"
+	"sort"
 )
 
 // A Ditherer convert a grayscale image with intensities going from 0 (black) to
@@ -91,15 +92,18 @@ func (is ImportanceSampling) Apply(gray *image.Gray) *image.Gray {
 	}
 	// Build roulette wheel
 	var roulette = make([]int, is.Threshold+1)
-	roulette[0] = 255 * len(histogram[0])
+	roulette[0] = 256
 	for i := 1; i < len(roulette); i++ {
-		roulette[i] = roulette[i-1] + (255-i)*len(histogram[uint8(i)])
+		roulette[i] = roulette[i-1] + (256 - i)
 	}
 	// Run the wheel
 	var i int
 	for i < is.N {
-		var bin = uint8(binarySearchInt(is.RNG.Intn(roulette[is.Threshold]), roulette))
-		var point = histogram[bin][is.RNG.Intn(len(histogram[bin]))]
+		var (
+			ball  = is.RNG.Intn(roulette[len(roulette)-1])
+			bin   = uint8(sort.Search(len(roulette), func(i int) bool { return roulette[i] >= ball }))
+			point = histogram[bin][is.RNG.Intn(len(histogram[bin]))]
+		)
 		// Add the point if it hasn't been already sampled
 		if !sampled[point] {
 			dithered.SetGray(point.X, point.Y, color.Gray{0})
