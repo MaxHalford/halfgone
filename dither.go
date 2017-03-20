@@ -101,7 +101,7 @@ func (is ImportanceSampling) Apply(gray *image.Gray) *image.Gray {
 	for i < is.N {
 		var (
 			ball  = is.RNG.Intn(roulette[len(roulette)-1])
-			bin   = uint8(sort.Search(len(roulette), func(i int) bool { return roulette[i] >= ball }))
+			bin   = uint8(sort.SearchInts(roulette, ball))
 			point = histogram[bin][is.RNG.Intn(len(histogram[bin]))]
 		)
 		// Add the point if it hasn't been already sampled
