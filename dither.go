@@ -92,9 +92,9 @@ func (is ImportanceSampling) Apply(gray *image.Gray) *image.Gray {
 	}
 	// Build roulette wheel
 	var roulette = make([]int, is.Threshold+1)
-	roulette[0] = 256
+	roulette[0] = 256 * len(histogram[0])
 	for i := 1; i < len(roulette); i++ {
-		roulette[i] = roulette[i-1] + (256 - i)
+		roulette[i] = roulette[i-1] + (256-i)*len(histogram[uint8(i)])
 	}
 	// Run the wheel
 	var i int
