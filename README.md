@@ -10,7 +10,7 @@ If you are interested in digital halftoning, [this web page](http://www.efg2.com
 ## Original image
 
 ```go
-LoadImage("images/penguin.jpg")
+img := LoadImage("images/penguin.jpg")
 ```
 
 ![original](examples/images/penguin.jpg)
@@ -19,7 +19,7 @@ LoadImage("images/penguin.jpg")
 ## Grayscale
 
 ```go
-ImageToGray(img)
+gray := ImageToGray(img)
 ```
 
 ![grayscale](examples/images/grayscale.png)
